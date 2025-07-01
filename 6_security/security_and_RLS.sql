@@ -1,60 +1,55 @@
--- Security and Row-Level Security
--- This file contains SQL logic related to security and row-level security.
 
---Включи Row Level Security (RLS) для таблицы заказов.
+-- Enable Row Level Security (RLS) for the orders table
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY; 
 
---Настрой политику RLS: клиент может видеть только свои заказы.
+-- Create RLS policy: customers can only see their own orders
 CREATE POLICY customer_order_policy
 ON orders
 USING (customer_id::text = current_setting('app.customer_id'));
 
 ALTER TABLE orders FORCE ROW LEVEL SECURITY;
 
---test
+-- Test the policy by setting app.customer_id and querying orders
 SET app.customer_id = '123';
 SELECT * FROM orders;
 
---Настрой роль guest, которая видит только список товаров.
+-- Create a client_user role that can only view the list of orders
 CREATE ROLE client_user LOGIN PASSWORD 'testpass';
 GRANT SELECT ON orders TO client_user;
 
---Сделай пользователя, который может только SELECT в products.
+-- Create a product_viewer user who can only perform SELECT on products
 CREATE ROLE product_viewer LOGIN PASSWORD '12345';
 
 GRANT CONNECT ON DATABASE poligon TO product_viewer;
-
 GRANT USAGE ON SCHEMA public TO product_viewer;
-
 GRANT SELECT ON products TO product_viewer;
 
---Запрети INSERT/UPDATE в orders для роли guest.
+-- Revoke modification permissions on orders from client_user
 REVOKE INSERT, UPDATE, DELETE ON orders FROM client_user;
-
 GRANT SELECT ON orders TO client_user;
 
---Настрой RLS политику для order_items с фильтрацией по заказам пользователя.
+-- Set up RLS policy for order_items filtering by the user's orders
 ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY rls_items_per_customer
 ON order_items
 FOR SELECT 
 USING (
-	EXISTS (
-		SELECT 1
-		FROM orders o
-		WHERE o.id = order_items.order_id AND o.customer_id::text = current_setting('app.customer_id')
-	)
+    EXISTS (
+        SELECT 1
+        FROM orders o
+        WHERE o.id = order_items.order_id AND o.customer_id::text = current_setting('app.customer_id')
+    )
 );
 
 GRANT SELECT ON order_items TO client_user; 
 
---test
+-- Test RLS on order_items
 SET app.customer_id = '42';
 SELECT * FROM orders;
 SELECT * FROM order_items;
 
---Создай функцию регистрации, которая создаёт пользователя и даёт права.
+-- Create a registration function that creates a user and assigns permissions
 CREATE OR REPLACE FUNCTION register_customer_user(customer_id INT, login TEXT, pass TEXT)
 RETURNS void AS $$
 BEGIN
@@ -68,20 +63,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
---Сделай политику: только админ может видеть всех клиентов.
+-- Create a policy: only admin (god) can view all customers
 CREATE POLICY admin_only_customers
 ON customers
 FOR SELECT
 TO god
 USING (true);
 
+-- Create a policy: regular users can only view their own data
 CREATE POLICY self_only_customers
 ON customers
 FOR SELECT
 TO client_user
 USING (id::text = current_setting('app.customer_id'));
 
---Защити поля email (шифрование или маскирование).
+-- Protect email field using masking
 CREATE OR REPLACE VIEW masked_customers AS
 SELECT
   id,
@@ -91,7 +87,7 @@ SELECT
   country
 FROM customers;
 
---Role set
+-- Set and reset role to test access
 SET ROLE client_user;
 RESET ROLE;
-SELECT current_user ;
+SELECT current_user;
