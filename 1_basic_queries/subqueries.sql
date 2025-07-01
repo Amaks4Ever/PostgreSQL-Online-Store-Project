@@ -1,6 +1,3 @@
--- Subqueries and their uses
--- This file contains SQL logic related to subqueries and their uses.
-
 --Найти клиентов, которые сделали заказ на сумму выше средней
 SELECT 
 o.id as order_num,
