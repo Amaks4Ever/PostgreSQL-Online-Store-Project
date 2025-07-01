@@ -1,7 +1,4 @@
--- Procedures and functions
--- This file contains SQL logic related to procedures and functions.
-
--- Функция: рассчитать итоговую стоимость заказа по ID.
+-- Function: calculate the total cost of an order by ID.
 CREATE OR REPLACE FUNCTION get_order_total(order_id INT)
 RETURNS NUMERIC AS $$
 DECLARE
@@ -16,7 +13,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Функция: вернуть список заказов по клиенту.
+-- Function: return a list of orders by customer.
 CREATE OR REPLACE FUNCTION get_orders_by_customer(customer_id INT)
 RETURNS TABLE(order_id INT, order_date VARCHAR, total NUMERIC, status VARCHAR) AS $$
 BEGIN
@@ -27,7 +24,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Процедура: массовое изменение категории товаров.
+-- Procedure: bulk update product category.
 CREATE OR REPLACE PROCEDURE update_category_bulk(old_cat TEXT, new_cat TEXT)
 LANGUAGE plpgsql
 AS $$
@@ -38,7 +35,7 @@ BEGIN
 END;
 $$;
 
--- Функция: получить среднюю цену товаров по категории.
+-- Function: get the average price of products in a category.
 CREATE OR REPLACE FUNCTION avg_price_by_category(cat TEXT)
 RETURNS NUMERIC AS $$
 DECLARE
@@ -51,7 +48,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Процедура: добавить несколько заказов в одной транзакции.
+-- Procedure: insert multiple orders in one transaction.
 CREATE OR REPLACE PROCEDURE insert_bulk_orders(customer_id INT, total1 NUMERIC, total2 NUMERIC)
 LANGUAGE plpgsql
 AS $$
@@ -63,7 +60,7 @@ BEGIN
 END;
 $$;
 
--- Функция: проверить, делал ли клиент заказы в этом месяце.
+-- Function: check if a customer has made orders this month.
 CREATE OR REPLACE FUNCTION had_orders_this_month(c_id INT)
 RETURNS BOOLEAN AS $$
 DECLARE
@@ -78,7 +75,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Функция: возвращающая количество заказов по статусу.
+-- Function: return the count of orders by status.
 CREATE OR REPLACE FUNCTION count_orders_by_status(status_name TEXT)
 RETURNS INTEGER AS $$
 DECLARE
