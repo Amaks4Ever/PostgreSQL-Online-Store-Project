@@ -1,5 +1,42 @@
-# PostgreSQL-Online-Store-Project
-A PostgreSQL project simulating an online store: users, products, orders, order items, and secure database features.
+# PostgreSQL Online Store Project
+
+This repository contains a comprehensive PostgreSQL-based project simulating an online store, designed to demonstrate and practice key SQL and database administration skills.
+
+The project covers the full lifecycle of a relational database system, including the modeling of core business entities such as:
+
+- Users
+- Products
+- Orders
+- Order Items
+
+It includes advanced features that go beyond basic SQL queries to showcase real-world data handling, optimization, and security techniques.
+
+## Key Features
+
+### Data Modeling and Structure
+- Creation of normalized tables using 1NF, 2NF, and 3NF principles
+- Relationships: one-to-many and many-to-many
+- Views for simplified access to complex data
+
+### Business Logic Implementation
+- Stored Procedures and Functions for reusable business logic
+- Triggers to automate actions such as logging or consistency checks
+
+### Security and Access Control
+- User roles and privileges management
+- Implementation of Row-Level Security (RLS) to isolate user data
+- Field-level encryption using pgcrypto for sensitive information (e.g., passwords)
+
+### Optimization and Performance
+- Indexing strategies
+- Query performance measurement
+- Use of EXPLAIN and ANALYZE
+- Window functions and CTEs for efficient analytics
+
+### Practical SQL Querying
+- Basic and advanced SQL queries
+- Aggregations, joins, subqueries, and recursive queries
+- Use of CASE, filters, and conditional logic
 
 ## Project Structure
 
@@ -52,6 +89,6 @@ If you're hiring or looking for collaborators, feel free to reach out!
 
 ## Contact
 
-- Telegram: @wertyoz_007
+- Telegram: https://t.me/wertyoz_007
 - Email: 1799pushkin1837@gmail.com
 - GitHub: https://github.com/Amaks4Ever
