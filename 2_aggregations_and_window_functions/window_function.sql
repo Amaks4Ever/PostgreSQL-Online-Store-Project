@@ -1,7 +1,4 @@
--- Window functions
--- This file contains SQL logic related to window functions.
-
---Номер заказа клиента по порядку.
+-- Customer order number in order
 SELECT 
 c.first_name,
 c.last_name,
@@ -13,7 +10,7 @@ FROM orders o
 JOIN customers c ON o.customer_id = c.id;
 
 
---Разница между ценой товара и средней по категории.
+-- Difference between product price and category average
 SELECT 
 name,
 category,
@@ -22,7 +19,7 @@ ROUND(AVG(price) OVER (PARTITION BY category),2) as avg_category_price,
 price - ROUND(AVG(price) OVER (PARTITION BY category),2) as diff
 FROM products;
 
---Среднее значение суммы заказов по клиенту.
+-- Average order amount per customer
 SELECT DISTINCT ON(c.first_name, c.last_name)
 c.first_name,
 c.last_name,
@@ -31,7 +28,7 @@ ROUND(AVG(o.total_amount) OVER (
 FROM orders o
 JOIN customers c ON o.customer_id = c.id;
 
---Топ-3 товара по цене в каждой категории.
+-- Top 3 most expensive products in each category
 SELECT 
 name,
 category,
@@ -49,7 +46,7 @@ FROM (
 ) as rank_table
 WHERE rank_table.rnk <=3;
 
---Средняя сумма заказа за последние 3 заказа (ROWS BETWEEN).
+-- Average order amount over the customer's last 3 orders
 SELECT 
 c.first_name,
 c.last_name,
@@ -76,7 +73,7 @@ FROM(
 JOIN customers c ON avg_table.cid = c.id
 WHERE avg_table.rn <=3;
 
---Использовать LAG() для сравнения заказов одного клиента.
+-- Use LAG() to compare a customer's order amounts
 SELECT
 c.first_name,
 c.last_name,
@@ -90,7 +87,7 @@ o.total_amount-LAG(o.total_amount) OVER (
 FROM orders o
 JOIN customers c ON o.customer_id = c.id;
 
---NTILE(4) — деление клиентов по квартилям заказов.
+-- NTILE(4): Divide customers into order amount quartiles
 
 
 SELECT
@@ -106,7 +103,7 @@ NTILE(4) OVER (
 FROM orders o
 JOIN customers c ON o.customer_id = c.id;
 
---Сравнить каждый заказ с предыдущим (по дате).
+-- Compare each order to the previous one by date
 SELECT
 c.first_name,
 c.last_name,
@@ -120,7 +117,7 @@ o.total_amount-LAG(o.total_amount) OVER (
 FROM orders o
 JOIN customers c ON o.customer_id = c.id;
 
---Общее число товаров в заказе с накоплением.
+-- Cumulative sum of products in each order
 SELECT
 oi.order_id,
 p.name,
@@ -133,7 +130,7 @@ SUM(oi.quantity) OVER (
 FROM order_items oi
 JOIN products p ON oi.product_id = p.id;
 
---Сумма заказов клиента до текущего заказа.
+-- Running total of customer's order amounts
 SELECT
 c.first_name,
 c.last_name,

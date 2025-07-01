@@ -1,12 +1,10 @@
--- Aggregations and groupings
--- This file contains SQL logic related to aggregations and groupings.
 
---Общая сумма всех заказов.
+-- Total sum of all orders.
 SELECT 
 	SUM(total_amount)
 FROM orders;
 
---Среднее количество позиций в заказе.
+-- Average number of items per order.
 WITH count_orders AS (
 	SELECT 
 		COUNT(*) as avg_count	
@@ -17,14 +15,14 @@ SELECT
 	ROUND(AVG(avg_count))
 FROM count_orders;
 
---Количество клиентов из каждой страны.
+-- Number of customers from each country.
 SELECT 
 	country,
 	COUNT(*) 
 FROM customers
 GROUP BY country;
 
---Средняя цена товаров в каждой категории.
+-- Average product price in each category.
 SELECT 
 	category,
 	ROUND(AVG(price),2) as avg_price
@@ -32,7 +30,7 @@ FROM products
 GROUP BY category
 ORDER BY avg_price DESC ;
 
---Самые заказываемые товары (топ 5).
+-- Most ordered products (Top 5).
 SELECT
 	p.name,
 	SUM(oi.quantity) as sum_product
@@ -41,8 +39,7 @@ JOIN products p ON oi.product_id = p.id
 GROUP BY p.name
 ORDER BY SUM(oi.quantity) DESC LIMIT 5;
 
-
---Клиенты с суммой заказов больше $1000.
+-- Customers with total orders over $1000.
 SELECT 
 	c.first_name,
 	c.last_name,
@@ -52,7 +49,7 @@ JOIN customers c ON o.customer_id = c.id
 GROUP BY c.first_name, c.last_name 
 HAVING SUM(o.total_amount)>1000;
 
---Категории, в которых средняя цена товара больше $240.
+-- Categories with average price over $240.
 SELECT 
 	category,
 	ROUND(AVG(price),2) AS avg_price
@@ -60,7 +57,7 @@ FROM products
 GROUP BY category 
 HAVING AVG(price)>240;
 
---Продукты, проданные более чем в 500 заказах.
+-- Products sold in more than 500 orders.
 SELECT 
 	p.name,
 	COUNT(oi.order_id) as count_o
@@ -69,7 +66,7 @@ JOIN products p ON oi.product_id = p.id
 GROUP BY p.name HAVING COUNT(oi.order_id)> 500
 ORDER BY count_o;
 
---Кол-во заказов по месяцам.
+-- Number of orders by month.
 SELECT 
 TO_CHAR(order_date::DATE, 'YYYY-MM') as order_date,
 COUNT(*) as orders_count
@@ -77,7 +74,7 @@ FROM orders
 GROUP BY TO_CHAR(order_date::DATE, 'YYYY-MM')
 ORDER BY order_date;
 
---Кол-во заказов у клиентов, у которых более 5 заказов.
+-- Customers with more than 5 orders.
 SELECT 
 c.first_name,
 c.last_name,
