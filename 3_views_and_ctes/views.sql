@@ -1,7 +1,5 @@
--- Views for abstraction
--- This file contains SQL logic related to views for abstraction.
 
--- 1. Представление всех заказов с деталями клиента и товаров.
+-- 1. View of all orders with customer and product details
 CREATE VIEW view_task_1 AS
 SELECT
 	o.id,
@@ -19,8 +17,8 @@ JOIN orders o ON oi.order_id = o.id
 JOIN products p ON oi.product_id = p.id
 JOIN customers c ON o.customer_id = c.id
 ORDER BY o.id;
-	
--- 2. Представление активных клиентов (делали ≥ 3 заказов)
+
+-- 2. View of active customers (who placed 3 or more orders)
 CREATE OR REPLACE VIEW v_active_customers AS
 SELECT
   c.id,
@@ -32,7 +30,7 @@ JOIN orders o ON c.id = o.customer_id
 GROUP BY c.id
 HAVING COUNT(o.id) >= 3;
 
--- 3. Представление популярных товаров по количеству покупок
+-- 3. View of popular products based on quantity sold
 CREATE OR REPLACE VIEW v_popular_products AS
 SELECT
   p.id,
@@ -44,7 +42,7 @@ JOIN order_items oi ON p.id = oi.product_id
 GROUP BY p.id
 ORDER BY total_sold DESC;
 
--- 4. Представление заказов с итоговой суммой и количеством позиций
+-- 4. View summarizing each order with total amount and item count
 CREATE OR REPLACE VIEW v_orders_summary AS
 SELECT
   o.id AS order_id,
@@ -55,13 +53,13 @@ FROM orders o
 JOIN order_items oi ON o.id = oi.order_id
 GROUP BY o.id;
 
--- 5. Представление всех заказов 2023 года
+-- 5. View of orders placed in 2023
 CREATE OR REPLACE VIEW v_orders_2023 AS
 SELECT *
 FROM orders
 WHERE order_date LIKE '2023-%';
 
--- 6. Представление средней суммы заказа по клиенту
+-- 6. View of average order amount per customer
 CREATE OR REPLACE VIEW v_avg_order_per_customer AS
 SELECT
   c.id AS customer_id,
@@ -72,14 +70,14 @@ FROM customers c
 JOIN orders o ON c.id = o.customer_id
 GROUP BY c.id;
 
--- 7. Представление последних 10 заказов
+-- 7. View of the 10 most recent orders
 CREATE OR REPLACE VIEW v_latest_orders AS
 SELECT *
 FROM orders
 ORDER BY order_date DESC
 LIMIT 10;
 
--- 8. Представление заказов с товарами из категории 'Electronics'
+-- 8. View of orders that include products from the 'Electronics' category
 CREATE OR REPLACE VIEW v_orders_electronics AS
 SELECT DISTINCT o.id AS order_id,
        o.order_date,
@@ -92,7 +90,7 @@ JOIN order_items oi ON o.id = oi.order_id
 JOIN products p ON oi.product_id = p.id
 WHERE p.category = 'Electronics';
 
--- 9. Представление клиентов, заказавших более чем на 1000 у.е.
+-- 9. View of customers who spent more than 1000 currency units
 CREATE OR REPLACE VIEW v_high_value_customers AS
 SELECT
   c.id,
@@ -104,7 +102,7 @@ JOIN orders o ON c.id = o.customer_id
 GROUP BY c.id
 HAVING SUM(o.total_amount) > 1000;
 
--- 10. Представление заказов, в которых более 3 позиций
+-- 10. View of orders with more than 3 items
 CREATE OR REPLACE VIEW v_large_orders AS
 SELECT
   o.id AS order_id,
